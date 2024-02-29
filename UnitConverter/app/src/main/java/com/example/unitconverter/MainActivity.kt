@@ -1,7 +1,6 @@
 package com.example.unitconverter
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -24,12 +23,20 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.TextStyle
 import com.example.unitconverter.ui.theme.UnitConverterTheme
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     @ExperimentalMaterial3Api
@@ -52,83 +59,139 @@ class MainActivity : ComponentActivity() {
 @Composable
 @ExperimentalMaterial3Api
 fun UnitConverter() {
+    var inputValue by remember { mutableStateOf("") }
+    var outputValue by remember { mutableStateOf("0.0") }
+    var inputUnit by remember { mutableStateOf("Meters") }
+    var outputUnit by remember { mutableStateOf("Meters") }
+    var iExpended by remember { mutableStateOf(false) }
+    var oExpended by remember { mutableStateOf(false) }
+    val conversionFactor = remember { mutableStateOf(1.0) }
+    val oConversionFactor = remember { mutableStateOf(1.0) }
+
+    val customTextStyle = TextStyle(
+        fontFamily = FontFamily.Monospace,
+        fontSize = 32.sp,
+        color = Color.Red
+    )
+
+    fun convertUnits() {
+        val inputValueDouble = inputValue.toDoubleOrNull() ?: 0.0
+        val result =
+            (inputValueDouble * conversionFactor.value * 100.0 / oConversionFactor.value).roundToInt() / 100.0
+        outputValue = result.toString()
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Unit Converter")
+        Text("Unit Converter", style = customTextStyle)
         Spacer(Modifier.height(16.dp))
-        OutlinedTextField(value = "", onValueChange = {
-
-        })
+        OutlinedTextField(value = inputValue, onValueChange = {
+            inputValue = it
+            convertUnits()
+        },
+            label = { Text(text = "Enter Value") })
         Spacer(Modifier.height(16.dp))
         Row {
-//           val context = LocalContext.current
-//            Button(onClick = { Toast
-//                .makeText(context,
-//                    "Thanks for clicking!",
-//                    Toast.LENGTH_LONG).show() }) {
-//                    Text("Click me!")
-//            }
             Box {
-                Button(onClick = { /*TODO*/ }) {
-                    Text("Select")
-                    Icon(Icons.Default.ArrowDropDown,
-                        contentDescription = "Arrow Down")
+                Button(onClick = { iExpended = true }) {
+                    Text(inputUnit)
+                    Icon(
+                        Icons.Default.ArrowDropDown,
+                        contentDescription = "Arrow Down"
+                    )
                 }
             }
-            DropdownMenu(expanded = false, onDismissRequest = { /*TODO*/ }) {
+            DropdownMenu(expanded = iExpended, onDismissRequest = { iExpended = false }) {
                 DropdownMenuItem(text = { Text("Centimeters") },
-                    onClick = { /*TODO*/ }
+                    onClick = {
+                        iExpended = false
+                        inputUnit = "Centimeters"
+                        conversionFactor.value = 0.01
+                        convertUnits()
+                    }
                 )
                 DropdownMenuItem(text = { Text("Meters") },
-                    onClick = { /*TODO*/ }
+                    onClick = {
+                        iExpended = false
+                        inputUnit = "Meters"
+                        conversionFactor.value = 1.0
+                        convertUnits()
+                    }
                 )
                 DropdownMenuItem(text = { Text("Feet") },
-                    onClick = { /*TODO*/ }
+                    onClick = {
+                        iExpended = false
+                        inputUnit = "Feet"
+                        conversionFactor.value = 0.3048
+                        convertUnits()
+                    }
                 )
                 DropdownMenuItem(text = { Text("Millimeters") },
-                    onClick = { /*TODO*/ }
+                    onClick = {
+                        iExpended = false
+                        inputUnit = "Millimeters"
+                        conversionFactor.value = 0.001
+                        convertUnits()
+                    }
                 )
             }
             Spacer(Modifier.width(16.dp))
 
             Box {
-                Button(onClick = { /*TODO*/ }) {
-                    Text("Select")
-                    Icon(Icons.Default.ArrowDropDown,
-                        contentDescription = "Arrow Down")
+                Button(onClick = { oExpended = true }) {
+                    Text(outputUnit)
+                    Icon(
+                        Icons.Default.ArrowDropDown,
+                        contentDescription = "Arrow Down"
+                    )
                 }
-            }
-            DropdownMenu(expanded = false, onDismissRequest = { /*TODO*/ }) {
-                DropdownMenuItem(text = { Text("Centimeters") },
-                    onClick = { /*TODO*/ }
-                )
-                DropdownMenuItem(text = { Text("Meters") },
-                    onClick = { /*TODO*/ }
-                )
-                DropdownMenuItem(text = { Text("Feet") },
-                    onClick = { /*TODO*/ }
-                )
-                DropdownMenuItem(text = { Text("Millimeters") },
-                    onClick = { /*TODO*/ }
-                )
+
+                DropdownMenu(expanded = oExpended, onDismissRequest = { oExpended = false }) {
+                    DropdownMenuItem(text = { Text("Centimeters") },
+                        onClick = {
+                            oExpended = false
+                            outputUnit = "Centimeters"
+                            oConversionFactor.value = 0.01
+                            convertUnits()
+                        }
+                    )
+                    DropdownMenuItem(text = { Text("Meters") },
+                        onClick = {
+                            oExpended = false
+                            outputUnit = "Meters"
+                            oConversionFactor.value = 1.0
+                            convertUnits()
+                        }
+                    )
+                    DropdownMenuItem(text = { Text("Feet") },
+                        onClick = {
+                            oExpended = false
+                            outputUnit = "Feet"
+                            oConversionFactor.value = 0.3048
+                            convertUnits()
+                        }
+                    )
+                    DropdownMenuItem(text = { Text("Millimeters") },
+                        onClick = {
+                            oExpended = false
+                            outputUnit = "Millimeters"
+                            oConversionFactor.value = 0.001
+                            convertUnits()
+                        }
+                    )
+                }
             }
         }
         Spacer(Modifier.height(16.dp))
-        Text("Result:")
+        Text(
+            "Result: $outputValue $outputUnit",
+            style = MaterialTheme.typography.headlineMedium
+        )
     }
 }
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
 
 @Preview(showBackground = true)
 @Composable
