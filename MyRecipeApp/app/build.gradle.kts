@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -58,6 +59,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     //image loading
     implementation("io.coil-kt:coil-compose:2.4.0")
+    //navigation
+    implementation("androidx.navigation:navigation-compose:2.7.4")
 
     //Other
     implementation("androidx.core:core-ktx:1.12.0")
