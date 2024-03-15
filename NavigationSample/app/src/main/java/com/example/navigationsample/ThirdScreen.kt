@@ -17,10 +17,6 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun ThirdScreen(navigateToFirstScreen: () -> Unit) {
-    val name = remember {
-        mutableStateOf("")
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
