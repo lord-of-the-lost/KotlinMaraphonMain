@@ -51,7 +51,7 @@ fun AccountView() {
 
         Row(modifier = Modifier.padding(top = 16.dp)) {
             Icon(
-                painter = painterResource(com.example.musicappui.R.drawable.ic_music),
+                painter = painterResource(com.example.musicappui.R.drawable.ic_baseline_music_note_24),
                 contentDescription = "My Music",
                 modifier = Modifier.padding(end = 8.dp)
             )
